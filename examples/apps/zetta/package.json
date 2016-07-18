@@ -1,0 +1,21 @@
+{
+  "name": "zetta",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node.extend": "^1.1.5",
+    "alexa-app": "^2.3.2",
+    "alexa-app-server": "^2.2.4",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "lodash": "^4.5.0",
+    "mocha": "^2.4.5",
+    "request-promise": "^2.0.1"
+  }
+}
