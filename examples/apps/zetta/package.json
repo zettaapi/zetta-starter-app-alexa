@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "node-rest-client": "^2.0.1",
     "node.extend": "^1.1.5",
     "alexa-app": "^2.3.2",
     "alexa-app-server": "^2.2.4",
