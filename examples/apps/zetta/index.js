@@ -1,4 +1,4 @@
-// ARN 
+// ARN arn:aws:lambda:us-east-1:193654999912:function:zetta
 'use strict';
 module.change_code = 1;
 var _ = require('lodash');
@@ -21,11 +21,11 @@ app.launch(function(req, res) {
 
 // STATE INTENT
 var deviceStateSlots = {'DEVICETYPE':'DEVICETYPE', 'SERVERNAME':'SERVERNAME'};
-var deviceUtterance = "{|the} {DEVICETYPE} {|at} {SERVERNAME}";
+var deviceUtterance = "{of|for|on|of the|for the|on the} {DEVICETYPE} {at|in} {SERVERNAME}";
 
-app.intent('stateIntent', {
+app.intent('state', {
     'slots': deviceStateSlots,
-    'utterances': ["{status|state} {|of|for} " + deviceUtterance]
+    'utterances': [deviceUtterance]
   },
 
   function(req, res) {
@@ -57,7 +57,7 @@ app.intent('stateIntent', {
 
 var deviceActionSlots = extend(true, deviceStateSlots, {'DEVICEACTION': 'DEVICEACTION'});
 
-app.intent('actionIntent', {
+app.intent('call', {
     'slots': deviceActionSlots,
     'utterances': ["{DEVICEACTION} " + deviceUtterance]
   },
