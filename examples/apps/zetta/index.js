@@ -1,3 +1,4 @@
+// TODO: handle hyphenated actions
 // ARN arn:aws:lambda:us-east-1:193654999912:function:zetta
 'use strict';
 module.change_code = 1;
@@ -70,7 +71,7 @@ app.intent('callIntent', {
 
   function(req, res) {
     //get the slot
-    var deviceAction = req.slot('DEVICEACTION').toLowerCase();
+    var deviceAction = req.slot('DEVICEACTION').replace(/\s+/g, '-').toLowerCase();
     var deviceType = req.slot('DEVICETYPE').toLowerCase();
     var serverName = req.slot('SERVERNAME').toLowerCase();
     var reprompt = 'Tell me an action, device type and location.';
