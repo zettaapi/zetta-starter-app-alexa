@@ -12,6 +12,8 @@ var restClient = require('node-rest-client').Client;
 var zetta = new restClient();
 zetta.registerMethod("queryDevices", "http://demo.zettaapi.org", "GET");
 
+var IsNumeric = function (input) { return (input - 0) == input && (''+input).trim().length > 0; }
+
 var app = new Alexa.app('zetta');
 
 app.launch(function(req, res) {
@@ -59,6 +61,48 @@ app.intent('stateIntent', {
   }
 );
 
+// PROPERTY INTENT
+var devicePropertySlots = extend(true, deviceStateSlots, {'DEVICEPROPERTY': 'LITERAL'});
+
+app.intent('propertyIntent', {
+    'slots': devicePropertySlots,
+    'utterances': ["{what is the|what's the} {DEVICEPROPERTY} " + deviceUtterance]
+  },
+
+  function(req, res) {
+    //get the slot
+    var deviceType = req.slot('DEVICETYPE').toLowerCase();
+    var serverName = req.slot('SERVERNAME').toLowerCase();
+    var deviceProperty = req.slot('DEVICEPROPERTY').toLowerCase();
+    var reprompt = 'Ask me for the value of a property of a device type and location.';
+    if (_.isEmpty(deviceType) || _.isEmpty(serverName) || _.isEmpty(deviceProperty)) {
+      var prompt = 'I didn\'t hear a request for a device property, type and location. Please ask me for the value of a property of a device type and location.';
+      res.say(prompt).reprompt(reprompt).shouldEndSession(false);
+      return true;
+    } else {
+      var args = {
+        parameters: { ql: 'where type="' + deviceType + '"', server: serverName }
+      };
+      console.log('about to call device query in state intent.');
+      console.log('args: ' + util.inspect(args));
+      zetta.methods.queryDevices(args, function (data, response) {
+        var devicePropertyValue = 'unknown';
+        if (data.length > 0) {
+          data = JSON.parse(data.toString('utf8'));
+          devicePropertyValue = data.entities[0].properties[deviceProperty];
+          console.log('deviceProperty: ' + deviceProperty);
+        }
+        if (IsNumeric(devicePropertyValue)) {
+          devicePropertyValue = Math.round(devicePropertyValue * 100) / 100;
+        }
+        var words = deviceProperty + ' of ' + deviceType + ' at ' + serverName + ' is ' + devicePropertyValue + '.';
+        console.log('words: ' + words);
+        res.say(words).send();
+      });
+      return false;
+    }
+  }
+);
 
 // ACTION INTENT
 
