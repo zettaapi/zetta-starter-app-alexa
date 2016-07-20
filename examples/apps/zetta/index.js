@@ -13,6 +13,12 @@ var zetta = new restClient();
 zetta.registerMethod("queryDevices", "http://demo.zettaapi.org", "GET");
 
 var IsNumeric = function (input) { return (input - 0) == input && (''+input).trim().length > 0; }
+var camelize = function (str) {
+  return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+    if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+    return index == 0 ? match.toLowerCase() : match.toUpperCase();
+  });
+}
 
 var app = new Alexa.app('zetta');
 
@@ -32,8 +38,8 @@ app.intent('stateIntent', {
 
   function(req, res) {
     //get the slot
-    var deviceType = req.slot('DEVICETYPE').toLowerCase();
-    var serverName = req.slot('SERVERNAME').toLowerCase();
+    var deviceType = req.slot('DEVICETYPE').replace(/\s+/g, '-').toLowerCase();
+    var serverName = req.slot('SERVERNAME').replace(/\s+/g, '-').toLowerCase();
     var reprompt = 'Ask me for the state of a device type and location.';
     if (_.isEmpty(deviceType) || _.isEmpty(serverName)) {
       var prompt = 'I didn\'t hear a state request for a device type and location. Please ask me for the state of a device type and location.';
@@ -71,9 +77,9 @@ app.intent('propertyIntent', {
 
   function(req, res) {
     //get the slot
-    var deviceType = req.slot('DEVICETYPE').toLowerCase();
-    var serverName = req.slot('SERVERNAME').toLowerCase();
-    var deviceProperty = req.slot('DEVICEPROPERTY').toLowerCase();
+    var deviceType = req.slot('DEVICETYPE').replace(/\s+/g, '-').toLowerCase();
+    var serverName = req.slot('SERVERNAME').replace(/\s+/g, '-').toLowerCase();
+    var deviceProperty = camelize(req.slot('DEVICEPROPERTY'));
     var reprompt = 'Ask me for the value of a property of a device type and location.';
     if (_.isEmpty(deviceType) || _.isEmpty(serverName) || _.isEmpty(deviceProperty)) {
       var prompt = 'I didn\'t hear a request for a device property, type and location. Please ask me for the value of a property of a device type and location.';
@@ -116,8 +122,8 @@ app.intent('callIntent', {
   function(req, res) {
     //get the slot
     var deviceAction = req.slot('DEVICEACTION').replace(/\s+/g, '-').toLowerCase();
-    var deviceType = req.slot('DEVICETYPE').toLowerCase();
-    var serverName = req.slot('SERVERNAME').toLowerCase();
+    var deviceType = req.slot('DEVICETYPE').replace(/\s+/g, '-').toLowerCase();
+    var serverName = req.slot('SERVERNAME').replace(/\s+/g, '-').toLowerCase();
     var reprompt = 'Tell me an action, device type and location.';
     if (_.isEmpty(deviceAction) || _.isEmpty(deviceType) || _.isEmpty(serverName)) {
       var prompt = 'I didn\'t hear an action, device type and location. Please give me the information in order to use a device.';
